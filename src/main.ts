@@ -16,6 +16,9 @@ async function bootstrap() {
 
   await app.listen();
 
-  logger.log('User Service is listening', 'Initialization');
+  logger.log(
+    `User Service is listening on port ${process.env.PORT}`,
+    'Initialization',
+  );
 }
 bootstrap();
