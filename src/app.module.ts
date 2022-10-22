@@ -21,9 +21,6 @@ import { UserModule } from './modules/user/user.module';
       database: process.env.DB_NAME,
       entities: [User, UserAddress, UserPayment],
       synchronize: true,
-      ssl: {
-        rejectUnauthorized: false,
-      },
     }),
   ],
   controllers: [AppController],
