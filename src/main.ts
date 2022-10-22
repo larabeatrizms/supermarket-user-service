@@ -10,14 +10,14 @@ async function bootstrap() {
     transport: Transport.TCP,
     options: {
       host: 'localhost',
-      port: Number(process.env.PORT),
+      port: Number(process.env.PORT || 5000),
     },
   });
 
   await app.listen();
 
   logger.log(
-    `User Service is listening on port ${process.env.PORT}`,
+    `User Service is listening on port ${process.env.PORT || 5000}`,
     'Initialization',
   );
 }
