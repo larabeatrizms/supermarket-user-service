@@ -10,6 +10,8 @@ secrets:
   db_user: docker
   db_pass: docker
   db_name: postgres
+dependencies:
+  supermarket-product-service: latest
 # List of microservices powering our component
 services:
   database:
@@ -40,6 +42,7 @@ services:
       DB_NAME: ${{ secrets.db_name }}
       PORT: 8080
       HOST: "0.0.0.0"
+      RABBIT_HOST: ${{ dependencies.supermarket-product-service.interfaces.amqp.host }}
     # Mount our src directory to the container and use our dev command so we get hot-reloading
     debug:
       command: npm run start:dev

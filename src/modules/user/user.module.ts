@@ -18,8 +18,25 @@ import { User } from './entities/user.entity';
 import { UserAddress } from './entities/user-address.entity';
 import { UserPayment } from './entities/user-payment.entity';
 import { UpdateUserPasswordService } from './services/update-user-password.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserAddress, UserPayment])],
+  imports: [
+    TypeOrmModule.forFeature([User, UserAddress, UserPayment]),
+    RabbitMQModule.forRootAsync(RabbitMQModule, {
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        uri: `amqp://${configService.get('RABBIT_HOST')}`,
+        exchanges: [
+          {
+            name: 'event.exchange',
+            type: 'topic',
+          },
+        ],
+      }),
+    }),
+  ],
   providers: [
     FindByEmailService,
     SignInService,
