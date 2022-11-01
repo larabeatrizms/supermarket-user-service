@@ -7,6 +7,7 @@ import { UserRepositoryInterface } from '../repositories/user/user.interface.rep
 import { UserAddressRepositoryInterface } from '../repositories/user-address/user-address.interface.repository';
 import { PaymentType } from '../enums/payment-type.enum';
 import { UserPaymentRepositoryInterface } from '../repositories/user-payment/user-payment.interface.repository';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 export class CreateUserService {
   private readonly logger = new Logger(CreateUserService.name);
@@ -18,6 +19,7 @@ export class CreateUserService {
     private readonly userAddressRepository: UserAddressRepositoryInterface,
     @Inject('UserPaymentRepositoryInterface')
     private readonly userPaymentRepository: UserPaymentRepositoryInterface,
+    private readonly amqpConnection: AmqpConnection,
   ) {}
 
   async execute(data: CreateUserInterface): Promise<ISuccessResponse | Error> {
@@ -67,6 +69,16 @@ export class CreateUserService {
       await this.userPaymentRepository.createMany(payments);
 
       this.logger.log(`UserPayment created!`);
+
+      this.amqpConnection.publish(
+        'event.exchange',
+        'event.create.user.#',
+        user,
+      );
+
+      this.logger.log(
+        `User created sended to RabbitMQ! routingKey: event.create.user.#`,
+      );
 
       return {
         success: true,

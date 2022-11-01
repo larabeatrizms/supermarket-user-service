@@ -4,6 +4,7 @@ import { RpcException } from '@nestjs/microservices';
 import { ISuccessResponse } from 'src/shared/interfaces/SuccessResponse.interface';
 import { UserRepositoryInterface } from '../repositories/user/user.interface.repository';
 import { IUpdateUserProfile } from '../dtos/update-user-profile.interface';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 export class UpdateUserProfileService {
   private readonly logger = new Logger(UpdateUserProfileService.name);
@@ -11,6 +12,7 @@ export class UpdateUserProfileService {
   constructor(
     @Inject('UserRepositoryInterface')
     private readonly userRepository: UserRepositoryInterface,
+    private readonly amqpConnection: AmqpConnection,
   ) {}
 
   async execute(data: IUpdateUserProfile): Promise<ISuccessResponse | Error> {
@@ -40,6 +42,16 @@ export class UpdateUserProfileService {
       await this.userRepository.update(user);
 
       this.logger.log(`User updated! Email: ${email}`);
+
+      this.amqpConnection.publish(
+        'event.exchange',
+        'event.update.user.#',
+        user,
+      );
+
+      this.logger.log(
+        `User created sended to RabbitMQ! routingKey: event.update.user.#`,
+      );
 
       return {
         success: true,
