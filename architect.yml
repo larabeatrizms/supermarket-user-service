@@ -29,6 +29,7 @@ services:
       - database
     build:
       context: ./
+    command: npm run seed:prod && npm run start:prod
     # Specify the port and protocol the service listens on
     interfaces:
       main:

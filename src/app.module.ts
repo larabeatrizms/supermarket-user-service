@@ -10,7 +10,9 @@ import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UserModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
