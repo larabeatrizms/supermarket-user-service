@@ -27,7 +27,9 @@ export class DeleteUserService {
 
     this.logger.log('User deleted.');
 
-    this.amqpConnection.publish('event.exchange', 'event.delete.user.#', user);
+    this.amqpConnection.publish('event.exchange', 'event.delete.user.#', {
+      id,
+    });
 
     this.logger.log(
       `User deleted sended to RabbitMQ! routingKey: event.delete.user.#`,
