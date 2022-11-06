@@ -6,7 +6,7 @@ import { UserPayment } from 'src/modules/user/entities/user-payment.entity';
 import { User } from 'src/modules/user/entities/user.entity';
 
 /**
- * Import and provide base typeorm (mysql) related classes.
+ * Import and provide base typeorm (protgres) related classes.
  *
  * @module
  */

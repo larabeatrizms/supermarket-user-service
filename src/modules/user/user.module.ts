@@ -20,6 +20,7 @@ import { UserPayment } from './entities/user-payment.entity';
 import { UpdateUserPasswordService } from './services/update-user-password.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { DeleteUserService } from './services/delete-user.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, UserAddress, UserPayment]),
@@ -45,6 +46,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     UpdateUserProfileService,
     UpdateUserAddressService,
     UpdateUserPasswordService,
+    DeleteUserService,
     {
       provide: 'UserRepositoryInterface',
       useClass: UserRepository,

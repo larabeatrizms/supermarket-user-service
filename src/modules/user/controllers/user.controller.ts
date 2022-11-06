@@ -13,6 +13,8 @@ import { UpdateUserAddressService } from '../services/update-user-address.servic
 import { FindByEmailService } from '../services/find-by-email.service';
 import { IUpdateUserPassword } from '../dtos/update-user-password.interface';
 import { UpdateUserPasswordService } from '../services/update-user-password.service';
+import { DeleteUserDto } from '../dtos/delete-user.dto';
+import { DeleteUserService } from '../services/delete-user.service';
 
 @Controller()
 export class UserController {
@@ -24,6 +26,7 @@ export class UserController {
     private readonly updateUserProfileService: UpdateUserProfileService,
     private readonly updateUserAddressService: UpdateUserAddressService,
     private readonly updateUserPasswordService: UpdateUserPasswordService,
+    private readonly deleteUserService: DeleteUserService,
   ) {}
 
   @MessagePattern({ role: 'user', cmd: 'find-by-email' })
@@ -62,5 +65,10 @@ export class UserController {
   @MessagePattern({ role: 'user', cmd: 'update-user-password' })
   updateUserPassword(data: IUpdateUserPassword) {
     return this.updateUserPasswordService.execute(data);
+  }
+
+  @MessagePattern({ role: 'user', cmd: 'delete-user' })
+  deleteUser(data: DeleteUserDto) {
+    return this.deleteUserService.execute(data.id);
   }
 }
