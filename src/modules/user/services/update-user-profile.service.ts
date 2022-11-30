@@ -21,23 +21,39 @@ export class UpdateUserProfileService {
 
       this.logger.log('Validating fields...');
 
-      const { email, id } = data;
+      const { email, id, isAdmin, userSession } = data;
+
+      if (
+        userSession.userId !== Number(id) &&
+        userSession.role === 'customer'
+      ) {
+        throw new RpcException(
+          'Usuário não tem permissão para alterar informações de outros usuários!',
+        );
+      }
+
+      if (userSession.role === 'customer' && isAdmin) {
+        throw new RpcException(
+          'Usuário não tem permissão para alterar tipo de usuário!',
+        );
+      }
 
       const userAlreadyCreated = await this.userRepository.findOneByCondition({
         email,
       });
 
-      if (userAlreadyCreated) {
+      if (userAlreadyCreated && userAlreadyCreated.id !== Number(id)) {
         throw new RpcException('Este e-mail já está cadastrado.');
       }
 
-      const user = await this.userRepository.findOneById(id);
+      const user = await this.userRepository.findOneById(Number(id));
 
       if (!user) {
         throw new RpcException('Usuário não encontrado!');
       }
 
       user.email = email;
+      user.isAdmin = isAdmin || false;
 
       await this.userRepository.update(user);
 
